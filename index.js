@@ -1,9 +1,11 @@
 import express from 'express';
 import { MongoClient } from 'mongodb';
+import * as dotenv from 'dotenv'
+dotenv.config()
 
+const Mongo_url = process.env.MONGO_URL // this for access mongo atlas
+//'mongodb://localhost:27017';// this for access local mongo compass
 
-const Mongo_url = 'mongodb://localhost:27017';// this for access local mongo compass
-//process.env.MONGO_URL // this for access mongo atlas
 
 async function createConnection() {
     const client = new MongoClient(Mongo_url);
@@ -16,7 +18,7 @@ export const client = await createConnection()
 
 
 const app = express();
-const Port = 3000;
+const Port = process.env.Port;
 
 // Inbuilt Middleware
 app.use(express.json()); // say data is json or converting body to json data
@@ -44,7 +46,7 @@ app.post('/CreateStudent', async function (req, res) {
 })
 
 
-app.get('/products', async function (req, res) {
+app.get('/studentlist', async function (req, res) {
     const { category, rating } = req.query;
     console.log(category, rating, req.query)
     // let filteredproducts = products;
@@ -61,7 +63,7 @@ app.get('/products', async function (req, res) {
     if (rating) {
         query.rating = +rating;
     }
-    const filteredproducts = await client.db("b53we-node").collection("products").find(query).toArray();
+    const filteredproducts = await client.db("assign-mentor").collection("student").find(query).toArray();
     if (filteredproducts.length > 0) {
         res.send(filteredproducts);
     }
@@ -70,12 +72,12 @@ app.get('/products', async function (req, res) {
     }
 })
 
-app.get('/products/:id', async function (req, res) {
+app.get('/mentor/:id', async function (req, res) {
     const { id } = req.params;
     console.log(id, req.params)
     //db.products.findOne({id: id})
     //const product = await products.find((pd) => pd.id === id);
-    const product = await client.db("b53we-node").collection("products").findOne({ id: id });
+    const product = await client.db("assign-mentor").collection("mentor").findOne({ id: id });
     try {
         if (product) {
             res.send(product);
@@ -88,13 +90,13 @@ app.get('/products/:id', async function (req, res) {
     }
 })
 
-app.delete('/products/:id', async function (req, res) {
+app.put('/mentor/:id', async function (req, res) {
     const { id } = req.params;
     console.log(id, req.params)
     //db.products.findOne({id: id})
     //const product = await products.find((pd) => pd.id === id);
-    const product = await client.db("b53we-node").collection("products").deleteOne({ id: id });
+    const product = await client.db("assign-mentor").collection("student").deleteOne({ id: id });
     res.send(product);
 })
 
-app.listen(Port, () => console.log(`Server Started on Port ${Port}`))
+app.listen(Port, () => console.log(`Server Started`))
