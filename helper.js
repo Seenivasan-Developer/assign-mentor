@@ -50,7 +50,7 @@ export async function getStudentWithOutMentor() {
 }
 
 export async function assignMentor(studentIds, mentorId, MentorName) {
-  await client.db("assign-mentor").collection("student").updateMany(
+ return await client.db("assign-mentor").collection("student").updateMany(
       { _id: { $in: studentIds } },
       { $set: { Mentor: mentorId, MentorName: MentorName } }
   );
