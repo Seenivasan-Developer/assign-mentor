@@ -1,10 +1,10 @@
 import express from 'express';
 import { MongoClient } from 'mongodb';
 import * as dotenv from 'dotenv'
+import { addMentor, addStudent, getNextSequenceValue, initializeCounters, getAllMentors, getStudentWithOutMentor, assignMentor, getStudentByIds, getMentorById, getPrevisousMentorByStudentId, changementor, getallStudentsByMentorId } from './helper.js';
 dotenv.config()
 
 const Mongo_url = process.env.MONGO_URL // this for access mongo atlas
-//'mongodb://localhost:27017';// this for access local mongo compass
 
 
 async function createConnection() {
@@ -15,7 +15,7 @@ async function createConnection() {
 }
 
 export const client = await createConnection()
-
+initializeCounters().catch(console.error);
 
 const app = express();
 const Port = process.env.Port;
@@ -29,74 +29,127 @@ app.get('/', function (req, res) {
 
 //1. to create Mentor
 app.post('/CreateMentor', async function (req, res) {
-    const newMentor = req.body;
-    console.log(newMentor)
-  const result=await client.db("assign-mentor").collection("mentor").insertMany(newMentor);
+    const mentorId = await getNextSequenceValue('mentorid');
+    const newMentor = { _id: mentorId, MentorName: req.body.MentorName };
+    // console.log(newMentor)
+    const result = await addMentor(newMentor);
     res.send(result);
 
 })
 
 //2. to create Student
 app.post('/CreateStudent', async function (req, res) {
-    const newStudent = req.body;
-    console.log(newStudent)
-  const result=await client.db("assign-mentor").collection("student").insertMany(newStudent);
+    const studentId = await getNextSequenceValue('studentid');
+    const newStudent = { _id: studentId, StudentName: req.body.StudentName, Mentor: null, PreviousMentor: null };
+    // console.log(newStudent)
+    const result = await addStudent(newStudent);
     res.send(result);
 
 })
 
-
-app.get('/studentlist', async function (req, res) {
-    const { category, rating } = req.query;
-    console.log(category, rating, req.query)
-    // let filteredproducts = products;
-    // if (category) {
-    //     filteredproducts = filteredproducts.filter((pd) => pd.category === category)
-    // }
-    // if (rating) {
-    //     filteredproducts = filteredproducts.filter((pd) => pd.rating == +rating)
-    // }
-    let query = {};
-    if (category) {
-        query.category = category;
-    }
-    if (rating) {
-        query.rating = +rating;
-    }
-    const filteredproducts = await client.db("assign-mentor").collection("student").find(query).toArray();
-    if (filteredproducts.length > 0) {
-        res.send(filteredproducts);
+//get All mentor
+app.get('/Mentorlist', async function (req, res) {
+    const mentorslist = await getAllMentors();
+    if (mentorslist.length > 0) {
+        res.send(mentorslist);
     }
     else {
-        res.send("Product Not Found For the Specified criteria...");
+        res.send("Mentor Not Found...");
     }
 })
 
-app.get('/mentor/:id', async function (req, res) {
-    const { id } = req.params;
-    console.log(id, req.params)
-    //db.products.findOne({id: id})
-    //const product = await products.find((pd) => pd.id === id);
-    const product = await client.db("assign-mentor").collection("mentor").findOne({ id: id });
+//get student without a mentor
+app.get('/Studentlist', async function (req, res) {
+    const Studentlist = await getStudentWithOutMentor();
+    if (Studentlist.length > 0) {
+        res.send(Studentlist);
+    }
+    else {
+        res.send("Student Not Found...");
+    }
+})
+
+//assign Mentor to Students
+app.post('/assignMentor/:mentorId', async function (req, res) {
     try {
-        if (product) {
-            res.send(product);
+        const mentorId = +req.params.mentorId;
+        const studentIds = req.body.Student_ids;
+        const mentor = await getMentorById(mentorId);
+        if (!mentor) return res.status(404).send('Mentor not found');
+        const MentorName = mentor.MentorName
+        const studentList = await getStudentByIds(studentIds);
+        if (studentList.length !== studentIds.length) {
+            return res.status(400).send('One or more students already have a mentor');
         }
-        else {
-            res.status(400).send("Product Not Found...");
-        }
+
+       const result= await assignMentor(studentIds, mentorId, MentorName);
+        res.json(
+            {
+                success: true,
+                message: result,
+            });
+
     } catch (error) {
-        res.status(500).send("Internal Server Error...");
+        res.json(
+            {
+                success: false,
+                error:error.message,
+                message: "Mentor assigning Failed...",
+            })
     }
 })
 
-app.put('/mentor/:id', async function (req, res) {
-    const { id } = req.params;
-    console.log(id, req.params)
-    //db.products.findOne({id: id})
-    //const product = await products.find((pd) => pd.id === id);
-    const product = await client.db("assign-mentor").collection("student").deleteOne({ id: id });
-    res.send(product);
+app.put('/changementor/:StudentId', async function (req, res) {
+    try {
+        const mentorId = +req.body.mentorId;
+        const StudentId = +req.params.StudentId;
+        const mentor = await getMentorById(mentorId);
+        if (!mentor) return res.status(404).send('Mentor not found');
+        const Mentor_Name = mentor.MentorName
+        const StudentDetail = await getPrevisousMentorByStudentId(StudentId);
+        const PreviousMentor = StudentDetail.PreviousMentor;
+        const result = await changementor(PreviousMentor, mentorId, Mentor_Name, StudentId);
+        res.json(
+            {
+                success: true,
+                message: result,
+            });
+
+    } catch (error) {
+        res.json(
+            {
+                success: false,
+                error:error.message,
+                message: "Mentor assigning Failed...",
+            })
+    }
+})
+
+//get All mentor
+app.get('/AllStudentByMentor/:mentorId', async function (req, res) {
+    const mentorId=+req.params.mentorId;
+    const mentorstudentlist = await getallStudentsByMentorId(mentorId);
+   // console.log(mentorstudentlist)
+    if (mentorstudentlist.length > 0) {
+        res.send(mentorstudentlist);
+    }
+    else {
+        res.send("Mentor with Student List Not Found...");
+    }
+})
+
+//Previously assigned mentor
+app.get('/PrevisousMentor/:studentId', async function (req, res) {
+    const studentId=+req.params.studentId;
+    const mentordetails = await getPrevisousMentorByStudentId(studentId);
+    console.log(mentordetails)
+    //if (!mentordetails) {
+        res.send(mentordetails);
+    /*}
+    else {
+        res.send("Mentor Details Not Found...");
+    }*/
 })
 
 app.listen(Port, () => console.log(`Server Started`))
+
