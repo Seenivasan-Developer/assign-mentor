@@ -31,7 +31,6 @@ export const getNextSequenceValue = async (sequenceName) => {
     { $inc: { sequence_value: 1 } },
     { new: true, upsert: true }
   );
-  console.log(sequenceDocument.sequence_value)
   return sequenceDocument.sequence_value;
 };
 
@@ -72,8 +71,6 @@ export async function changementor(PreviousMentor, mentorId, Mentor_Name, Studen
       { $set: { PreviousMentor: PreviousMentor, Mentor: mentorId, MentorName: Mentor_Name } });
 }
 export async function getallStudentsByMentorId(MentorId) {
- // const Mentor_id=+MentorId
- // console.log(Mentor_id)
   return await client.db("assign-mentor").collection("student").find({ Mentor: MentorId },{projection : {StudentName: 1, MentorName: 1, Mentor: 1}}).toArray();
 }
 

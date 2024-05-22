@@ -31,7 +31,6 @@ app.get('/', function (req, res) {
 app.post('/CreateMentor', async function (req, res) {
     const mentorId = await getNextSequenceValue('mentorid');
     const newMentor = { _id: mentorId, MentorName: req.body.MentorName };
-    // console.log(newMentor)
     const result = await addMentor(newMentor);
     res.send(result);
 
@@ -41,7 +40,6 @@ app.post('/CreateMentor', async function (req, res) {
 app.post('/CreateStudent', async function (req, res) {
     const studentId = await getNextSequenceValue('studentid');
     const newStudent = { _id: studentId, StudentName: req.body.StudentName, Mentor: null, PreviousMentor: null };
-    // console.log(newStudent)
     const result = await addStudent(newStudent);
     res.send(result);
 
@@ -129,7 +127,6 @@ app.put('/changementor/:StudentId', async function (req, res) {
 app.get('/AllStudentByMentor/:mentorId', async function (req, res) {
     const mentorId=+req.params.mentorId;
     const mentorstudentlist = await getallStudentsByMentorId(mentorId);
-   // console.log(mentorstudentlist)
     if (mentorstudentlist.length > 0) {
         res.send(mentorstudentlist);
     }
@@ -142,7 +139,6 @@ app.get('/AllStudentByMentor/:mentorId', async function (req, res) {
 app.get('/PrevisousMentor/:studentId', async function (req, res) {
     const studentId=+req.params.studentId;
     const mentordetails = await getPrevisousMentorByStudentId(studentId);
-    console.log(mentordetails)
     //if (!mentordetails) {
         res.send(mentordetails);
     /*}
