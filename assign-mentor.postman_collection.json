@@ -1,0 +1,218 @@
+{
+	"info": {
+		"_postman_id": "8f52e4fe-83f5-422d-9376-4c36ea7ee52b",
+		"name": "assign-mentor",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34958818"
+	},
+	"item": [
+		{
+			"name": "CreateMentor",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"MentorName\":\"Raj Mohan\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://assign-mentor-1tmc.onrender.com/CreateMentor",
+					"protocol": "https",
+					"host": [
+						"assign-mentor-1tmc",
+						"onrender",
+						"com"
+					],
+					"path": [
+						"CreateMentor"
+					]
+				},
+				"description": "### CreateMentor\n\nThis endpoint is used to create a new mentor.\n\n#### Request\n\n- Method: POST\n    \n- URL: `https://assign-mentor-1tmc.onrender.com/CreateMentor`\n    \n- Body:\n    - MentorName (text, required): The name of the mentor.\n        \n\n#### Response\n\n- Status: 200\n    \n- Content-Type: application/json\n    \n- Body:\n    \n    ``` json\n      {\n          \"acknowledged\": \"boolean\",\n          \"insertedId\": \"number\"\n      }\n    \n     ```"
+			},
+			"response": []
+		},
+		{
+			"name": "CreateStudent",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"StudentName\":\"Krishnan\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://assign-mentor-1tmc.onrender.com/CreateStudent",
+					"protocol": "https",
+					"host": [
+						"assign-mentor-1tmc",
+						"onrender",
+						"com"
+					],
+					"path": [
+						"CreateStudent"
+					]
+				},
+				"description": "### CreateStudent\n\nThis endpoint is used to create a new student.\n\n#### Request Body\n\n- `StudentName` (string, required): The name of the student.\n    \n\n#### Response\n\nThe response is in JSON format with the following schema:\n\n``` json\n{\n    \"acknowledged\": boolean,\n    \"insertedId\": number\n}\n\n ```\n\n- `acknowledged` (boolean): Indicates whether the operation was acknowledged.\n    \n- `insertedId` (number): The ID of the newly inserted student."
+			},
+			"response": []
+		},
+		{
+			"name": "Studentlist",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://assign-mentor-1tmc.onrender.com/Studentlist",
+					"protocol": "https",
+					"host": [
+						"assign-mentor-1tmc",
+						"onrender",
+						"com"
+					],
+					"path": [
+						"Studentlist"
+					]
+				},
+				"description": "### Request Description\n\nThis endpoint makes an HTTP GET request to retrieve the list of students.\n\n### Request Body\n\nThis request does not require a request body.\n\n### Response\n\nThe response returned is a JSON array with the following schema:\n\n``` json\n[\n  {\n    \"_id\": \"number\",\n    \"StudentName\": \"string\",\n    \"Mentor\": \"string or null\"\n  }\n]\n\n ```\n\nThe response contains an array of objects, where each object represents a student. The \"_id\" field is a number, \"StudentName\" is a string, and \"Mentor\" is either a string representing the mentor's name or null if the student does not have a mentor assigned."
+			},
+			"response": []
+		},
+		{
+			"name": "Mentorlist",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://assign-mentor-1tmc.onrender.com/Mentorlist",
+					"protocol": "https",
+					"host": [
+						"assign-mentor-1tmc",
+						"onrender",
+						"com"
+					],
+					"path": [
+						"Mentorlist"
+					]
+				},
+				"description": "\nThe `GET` request retrieves the list of mentors from the server.\n\n### Response\nThe response will be a JSON array with the following schema:\n```json\n[\n    {\n        \"_id\": \"number\",\n        \"MentorName\": \"string\"\n    }\n]\n```\n"
+			},
+			"response": []
+		},
+		{
+			"name": "assign-mentor",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Student_ids\":[1,2,4]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://assign-mentor-1tmc.onrender.com/assignMentor/1",
+					"protocol": "https",
+					"host": [
+						"assign-mentor-1tmc",
+						"onrender",
+						"com"
+					],
+					"path": [
+						"assignMentor",
+						"1"
+					]
+				},
+				"description": "\nThe `POST` request is used to assign a mentor to a specific student. The request should be sent to `https://assign-mentor-1tmc.onrender.com/assignMentor/1`.\n\n### Request Body\n- The request body should be in raw JSON format and include the `Student_ids` key, which is an array of student IDs to be assigned a mentor.\n\n### Response\nThe response will have a status code of 200 and a content type of `application/json`. The response body will be a JSON object with a `success` key, indicating whether the mentor assignment was successful.\n\n### Response JSON Schema\n```json\n{\n    \"type\": \"object\",\n    \"properties\": {\n        \"success\": {\n            \"type\": \"boolean\"\n        }\n    },\n    \"required\": [\"success\"]\n}\n"
+			},
+			"response": []
+		},
+		{
+			"name": "changementor",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"mentorId\":3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://assign-mentor-1tmc.onrender.com/changementor/2",
+					"protocol": "https",
+					"host": [
+						"assign-mentor-1tmc",
+						"onrender",
+						"com"
+					],
+					"path": [
+						"changementor",
+						"2"
+					]
+				},
+				"description": "### PUT /changementor/2\n\nThis endpoint is used to update the mentor ID for a specific change.\n\n#### Request\n\n- Method: PUT\n    \n- URL: `https://assign-mentor-1tmc.onrender.com/changementor/2`\n    \n- Body:\n    \n    ``` json\n    {\n      \"mentorId\": 0\n    }\n    \n     ```\n    \n\n#### Response\n\nThe response is in JSON format and has the following schema:\n\n``` json\n{\n  \"type\": \"object\",\n  \"properties\": {\n    \"success\": {\n      \"type\": \"boolean\"\n    },\n    \"message\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"acknowledged\": {\n          \"type\": \"boolean\"\n        },\n        \"modifiedCount\": {\n          \"type\": \"number\"\n        },\n        \"upsertedId\": {\n          \"type\": \"null\"\n        },\n        \"upsertedCount\": {\n          \"type\": \"number\"\n        },\n        \"matchedCount\": {\n          \"type\": \"number\"\n        }\n      }\n    }\n  }\n}\n\n ```\n\nThe response contains a `success` boolean flag and a `message` object with details about the update operation."
+			},
+			"response": []
+		},
+		{
+			"name": "AllStudentByMentor",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://assign-mentor-1tmc.onrender.com/AllStudentByMentor/1",
+					"protocol": "https",
+					"host": [
+						"assign-mentor-1tmc",
+						"onrender",
+						"com"
+					],
+					"path": [
+						"AllStudentByMentor",
+						"1"
+					]
+				},
+				"description": "The endpoint retrieves a list of all students assigned to a specific mentor.\n\nThe response is a JSON array with the following schema:\n\n``` json\n[\n  {\n    \"_id\": \"number\",\n    \"StudentName\": \"string\",\n    \"Mentor\": \"number\",\n    \"MentorName\": \"string\"\n  }\n]\n\n ```"
+			},
+			"response": []
+		},
+		{
+			"name": "PrevisousMentor",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://assign-mentor-1tmc.onrender.com/PrevisousMentor/2",
+					"protocol": "https",
+					"host": [
+						"assign-mentor-1tmc",
+						"onrender",
+						"com"
+					],
+					"path": [
+						"PrevisousMentor",
+						"2"
+					]
+				},
+				"description": "### Get Previous Mentor\n\nThis endpoint retrieves the previous mentor details for a specific student.\n\n#### Request\n\n- Method: GET\n    \n- URL: `https://assign-mentor-1tmc.onrender.com/PrevisousMentor/2`\n    \n\n#### Response\n\nThe response is in JSON format and has the following schema:\n\n``` json\n{\n  \"_id\": \"number\",\n  \"StudentName\": \"string\",\n  \"Mentor\": \"number\",\n  \"PreviousMentor\": \"null\",\n  \"MentorName\": \"string\"\n}\n\n ```"
+			},
+			"response": []
+		}
+	]
+}
